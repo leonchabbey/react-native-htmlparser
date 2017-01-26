@@ -25,12 +25,12 @@ import HtmlParser from 'react-native-htmlparser'
 There is a special tags you can use, it's **general**. Its attributes will be applied to every html inline tags.
 ```jsx
 var tagsStyle = {
-general: {
-fontFamily: "Roboto"
-},
-p: {
-marginBottom: 15
-}
+  general: {
+    fontFamily: "Roboto"
+  },
+  p: {
+    marginBottom: 15
+  }
 }
 ```
 
