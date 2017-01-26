@@ -9,9 +9,30 @@ import {
 
 var BLOCK_ELEMENTS = ["blockquote", "div", "h1", "h2", "h3", "h4", "h5", "h6", "hr", "ol", "p", "pre", "ul", "li"]
 
-var INLINE_ELEMENTS = ["b", "code", "i", "em", "strong", "a", "br", "q", "span", "sub", "sup"]
+var INLINE_ELEMENTS = ["b", "code", "i", "em", "strong", "a", "br", "q", "span", "sub", "sup", "u"]
 
-var DEFAULT_STYLES = StyleSheet.create({
+var TEXT_PROPS = [
+  "color",
+  "fontFamily",
+  "fontSize",
+  "fontStyle",
+  "fontWeight",
+  "lineHeight",
+  "textAlign",
+  "textDecorationLine",
+  "textShadowColor",
+  "textShadowOffset",
+  "textShadowRadius",
+  "includeFontPadding",
+  "textAlignVertical",
+  "iosfontVariant",
+  "iosletterSpacing",
+  "iostextDecorationColor",
+  "iostextDecorationStyle",
+  "ioswritingDirection"
+]
+
+var DEFAULT_STYLES = {
   a: {
 
   },
@@ -84,10 +105,13 @@ var DEFAULT_STYLES = StyleSheet.create({
   ul: {
     marginLeft: 24,
   },
+  u: {
+    textDecorationLine: "underline"
+  },
   default: {
 
   }
-})
+}
 
 class HtmlParser extends Component {
   parse = (html) => {
@@ -113,10 +137,10 @@ class HtmlParser extends Component {
 
   styleForTag = (tagName) => {
     const {tagsStyle} = this.props
-    var tagsStyleSheet = StyleSheet.create(tagsStyle)
+
     var style = tagsStyle
-                  ? tagsStyleSheet[tagName]
-                    ? tagsStyleSheet[tagName]
+                  ? tagsStyle[tagName]
+                    ? tagsStyle[tagName]
                     : DEFAULT_STYLES[tagName]
                       ? DEFAULT_STYLES[tagName]
                       : DEFAULT_STYLES["default"]
@@ -125,12 +149,11 @@ class HtmlParser extends Component {
                     : DEFAULT_STYLES["default"]
 
     return tagsStyle
-            ? tagsStyleSheet["general"]
-              ? [tagsStyleSheet["general"], style]
+            ? tagsStyle["general"]
+              ? [tagsStyle["general"], style]
               : style
             : style
   }
-
   processNode = (node, parentKey) => {
     var nodeName = node.nodeName
 
@@ -178,9 +201,13 @@ class HtmlParser extends Component {
       if (lastInlineNodes.length > 0) {
         children.push((<Text key={`${key}_last_inline`}>{lastInlineNodes}</Text>))  
       }
+
       return (
         <Text key={key} style={this.styleForTag(nodeName)}>
-          {children}
+          {nodeName === "li"
+            ? <Text>&bull; <Text>{children}</Text>{"\n"}</Text>
+            : children
+          }
         </Text>
       )
     }
