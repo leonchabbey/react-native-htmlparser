@@ -23,7 +23,7 @@ import HtmlParser from 'react-native-htmlparser'
 | html           | String | Your HTML content that needs to be parsed                                               |   |   |
 
 There is a special tags you can use, it's **general**. Its attributes will be applied to every html inline tags.
-```
+```jsx
 var tagsStyle = {
 general: {
 fontFamily: "Roboto"
