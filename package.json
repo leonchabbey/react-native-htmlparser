@@ -1,0 +1,31 @@
+{
+  "name": "react-native-html-parser",
+  "version": "1.0.0",
+  "description": "Parse your HTML tags to react-native Text components",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LeonChabbey/react-native-html-parser.git"
+  },
+  "keywords": [
+    "parse5",
+    "parser",
+    "html",
+    "react-native",
+    "html5",
+    "text"
+  ],
+  "author": "LeonChabbey",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/LeonChabbey/react-native-html-parser/issues"
+  },
+  "homepage": "https://github.com/LeonChabbey/react-native-html-parser#readme",
+  "dependencies": {
+    "react-native-parse-html": "^2.2.3",
+    "util": "^0.10.3"
+  }
+}
