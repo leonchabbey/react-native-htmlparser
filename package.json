@@ -1,6 +1,6 @@
 {
   "name": "react-native-htmlparser",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Parse your HTML tags to react-native Text components",
   "main": "index.js",
   "scripts": {
