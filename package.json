@@ -16,7 +16,9 @@
     "html",
     "react-native",
     "html5",
-    "text"
+    "text",
+    "react",
+    "style"
   ],
   "author": "LeonChabbey",
   "license": "MIT",

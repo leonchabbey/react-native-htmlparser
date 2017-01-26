@@ -87,91 +87,106 @@ var DEFAULT_STYLES = StyleSheet.create({
   default: {
 
   }
-});
-
-function isText(tagName) : Boolean {
-  return tagName === "#text"
-}
-
-function isBlockElement(tagName) : Boolean {
-  return BLOCK_ELEMENTS.indexOf(tagName) != -1
-}
-
-function isInlineElement(tagName) : Boolean {
-  return INLINE_ELEMENTS.indexOf(tagName) != -1
-}
-
-function isEmpty(node) : Boolean {
-  return node.value.trim() == ""
-}
-
-function styleForTag(tagName) {
-  var style = DEFAULT_STYLES[tagName] ? DEFAULT_STYLES[tagName] : DEFAULT_STYLES["default"]
-  return style
-}
-
-function processNode(node, parentKey) {
-  var nodeName = node.nodeName
-
-  if (isText(nodeName)) {
-    if (isEmpty(node)) {
-      return null
-    }
-
-    var key = `${parentKey}_text`
-    return (<Text key={key}>{node.value}</Text>)
-  }
-
-  if (isInlineElement(nodeName)) {
-    var key = `${parentKey}_${nodeName}`
-    var children = []
-    node.childNodes.forEach((childNode, index) => {
-      if (isInlineElement(childNode.nodeName) || isText(childNode.nodeName)) {
-        children.push(processNode(childNode, `${key}_${index}`))
-      } else {
-        console.error(`Inline element ${nodeName} can only have inline children, ${child} is invalid!`)
-      }
-    })
-    return (<Text key={key} style={styleForTag(nodeName)}>{children}</Text>)
-  }
-
-  if (isBlockElement(nodeName)) {
-    var key = `${parentKey}_${nodeName}`
-    var children = []
-    var lastInlineNodes = []
-
-    node.childNodes.forEach((childNode, index) => {
-      var child = processNode(childNode, `${key}_${index}`)
-      if (isInlineElement(childNode.nodeName) || isText(childNode.nodeName)) {
-        lastInlineNodes.push(child)
-
-      } else if (isBlockElement(childNode.nodeName)) {
-        if (lastInlineNodes.length > 0) {
-          children.push(<Text key={`${key}_${index}_inline`}>{lastInlineNodes}</Text>)  
-          lastInlineNodes = []
-        }
-        children.push(child)
-      }
-    })
-
-    if (lastInlineNodes.length > 0) {
-      children.push((<Text key={`${key}_last_inline`}>{lastInlineNodes}</Text>))  
-    }
-    return (
-      <Text key={key} style={styleForTag(nodeName)}>
-        {children}
-      </Text>
-    )
-  }
-
-  console.warn(`unsupported node: ${nodeName}`)
-  return null;
-}
+})
 
 class HtmlParser extends Component {
   parse = (html) => {
     var fragment = parse5.parseFragment(html)
     return fragment
+  }
+
+  isText = (tagName) => {
+    return tagName === "#text"
+  }
+
+  isBlockElement = (tagName) => {
+    return BLOCK_ELEMENTS.indexOf(tagName) != -1
+  }
+
+  isInlineElement = (tagName) => {
+    return INLINE_ELEMENTS.indexOf(tagName) != -1
+  }
+
+  isEmpty = (node) => {
+    return node.value.trim() == ""
+  }
+
+  styleForTag = (tagName) => {
+    const {tagsStyle} = this.props
+    var tagsStyleSheet = StyleSheet.create(tagsStyle)
+    var style = tagsStyle
+                  ? tagsStyleSheet[tagName]
+                    ? tagsStyleSheet[tagName]
+                    : DEFAULT_STYLES[tagName]
+                      ? DEFAULT_STYLES[tagName]
+                      : DEFAULT_STYLES["default"]
+                  : DEFAULT_STYLES[tagName]
+                    ? DEFAULT_STYLES[tagName]
+                    : DEFAULT_STYLES["default"]
+
+    return tagsStyle
+            ? tagsStyleSheet["general"]
+              ? [tagsStyleSheet["general"], style]
+              : style
+            : style
+  }
+
+  processNode = (node, parentKey) => {
+    var nodeName = node.nodeName
+
+    if (this.isText(nodeName)) {
+      if (this.isEmpty(node)) {
+        return null
+      }
+
+      var key = `${parentKey}_text`
+      return (<Text key={key}>{node.value}</Text>)
+    }
+
+    if (this.isInlineElement(nodeName)) {
+      var key = `${parentKey}_${nodeName}`
+      var children = []
+      node.childNodes.forEach((childNode, index) => {
+        if (this.isInlineElement(childNode.nodeName) || this.isText(childNode.nodeName)) {
+          children.push(this.processNode(childNode, `${key}_${index}`))
+        } else {
+          console.error(`Inline element ${nodeName} can only have inline children, ${child} is invalid!`)
+        }
+      })
+      return (<Text key={key} style={this.styleForTag(nodeName)}>{children}</Text>)
+    }
+
+    if (this.isBlockElement(nodeName)) {
+      var key = `${parentKey}_${nodeName}`
+      var children = []
+      var lastInlineNodes = []
+
+      node.childNodes.forEach((childNode, index) => {
+        var child = this.processNode(childNode, `${key}_${index}`)
+        if (this.isInlineElement(childNode.nodeName) || this.isText(childNode.nodeName)) {
+          lastInlineNodes.push(child)
+
+        } else if (this.isBlockElement(childNode.nodeName)) {
+          if (lastInlineNodes.length > 0) {
+            children.push(<Text key={`${key}_${index}_inline`}>{lastInlineNodes}</Text>)  
+            lastInlineNodes = []
+          }
+          children.push(child)
+        }
+      })
+
+      if (lastInlineNodes.length > 0) {
+        children.push((<Text key={`${key}_last_inline`}>{lastInlineNodes}</Text>))  
+      }
+      return (
+        <Text key={key} style={this.styleForTag(nodeName)}>
+          {children}
+        </Text>
+      )
+    }
+
+    console.warn(`unsupported node: ${nodeName}`)
+    return null;
   }
 
 
@@ -182,12 +197,13 @@ class HtmlParser extends Component {
 
     var children = []
     fragment.childNodes.forEach((node, index) => {
-      children.push(processNode(node, `${rootKey}_${index}`))
+      children.push(this.processNode(node, `${rootKey}_${index}`))
     })
 
     console.log(children)
+
     return (
-      <View style={this.props.style}>
+      <View style={this.props.containerStyle}>
         {children}
       </View>
     )
