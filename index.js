@@ -31,7 +31,8 @@ var BLOCK_ELEMENTS = [
   "p",
   "pre",
   "table",
-  "ul"
+  "ul",
+  "li"
 ]
 
 var INLINE_ELEMENTS = [
