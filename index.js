@@ -7,29 +7,66 @@ import {
   View,
 } from 'react-native'
 
-var BLOCK_ELEMENTS = ["blockquote", "div", "h1", "h2", "h3", "h4", "h5", "h6", "hr", "ol", "p", "pre", "ul", "li"]
+var BLOCK_ELEMENTS = [
+  "address",
+  "blockquote",
+  "center",
+  "dir",
+  "div",
+  "dl",
+  "fieldset",
+  "form",
+  "h1",
+  "h2",
+  "h3",
+  "h4",
+  "h5",
+  "h6",
+  "hr",
+  "isindex",
+  "menu",
+  "noframes",
+  "noscript",
+  "ol",
+  "p",
+  "pre",
+  "table",
+  "ul"
+]
 
-var INLINE_ELEMENTS = ["b", "code", "i", "em", "strong", "a", "br", "q", "span", "sub", "sup", "u"]
-
-var TEXT_PROPS = [
-  "color",
-  "fontFamily",
-  "fontSize",
-  "fontStyle",
-  "fontWeight",
-  "lineHeight",
-  "textAlign",
-  "textDecorationLine",
-  "textShadowColor",
-  "textShadowOffset",
-  "textShadowRadius",
-  "includeFontPadding",
-  "textAlignVertical",
-  "iosfontVariant",
-  "iosletterSpacing",
-  "iostextDecorationColor",
-  "iostextDecorationStyle",
-  "ioswritingDirection"
+var INLINE_ELEMENTS = [
+  "a",
+  "abbr",
+  "acronym",
+  "b",
+  "basefont",
+  "bdo",
+  "big",
+  "br",
+  "cite",
+  "code",
+  "dfn",
+  "em",
+  "font",
+  "i",
+  "img",
+  "input",
+  "kbd",
+  "label",
+  "q",
+  "s",
+  "samp",
+  "select",
+  "small",
+  "span",
+  "strike",
+  "strong",
+  "sub",
+  "sup",
+  "textarea",
+  "tt",
+  "u",
+  "var"
 ]
 
 var DEFAULT_STYLES = {
@@ -109,7 +146,7 @@ var DEFAULT_STYLES = {
     textDecorationLine: "underline"
   },
   default: {
-
+    marginBottom: 12
   }
 }
 
@@ -215,7 +252,6 @@ class HtmlParser extends Component {
     console.warn(`unsupported node: ${nodeName}`)
     return null;
   }
-
 
   render() {
     var html = this.props.html
