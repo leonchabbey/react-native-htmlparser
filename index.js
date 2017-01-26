@@ -200,8 +200,6 @@ class HtmlParser extends Component {
       children.push(this.processNode(node, `${rootKey}_${index}`))
     })
 
-    console.log(children)
-
     return (
       <View style={this.props.containerStyle}>
         {children}
