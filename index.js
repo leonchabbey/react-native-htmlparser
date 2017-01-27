@@ -1,7 +1,6 @@
 import parse5 from 'react-native-parse-html'
 import React, {Component} from "react"
 import {
-  AppRegistry,
   StyleSheet,
   Text,
   View,
