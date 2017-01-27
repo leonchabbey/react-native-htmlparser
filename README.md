@@ -1,8 +1,8 @@
 # react-native-htmlparser
 
 ### Why?
-I did not find any working solution, so I searched for existing packages. 
-None of them were workig properly so I fixed and merged them into one react-native-htmlparser. This new package depends on @kodefox's parse5 react-native version, and is inspired by @siuying htmltext converter.
+I did not find any working solution, so I looked for existing packages. 
+None of them were working properly, so I decided to make my own from other packages' parts that I found interesting and usable. This package depends on @kodefox's parse5 react-native version, and is inspired by @siuying's htmltext.
 
 Check their packages out:
 - @kodefox - [react-native-parse-html]
@@ -18,19 +18,19 @@ import HtmlParser from 'react-native-htmlparser'
 
 |       Props         |   Type     | Information                                                                                     |   |   |
 |----------------|:--------:|-----------------------------------------------------------------------------------------|---|---|
-| containerStyle | array  | Style that will apply on the main View                                                  |   |   |
-| tagsStyle      | array  | Style that will apply on each inline tag that you can find in HTML Ex: p, i, a, br, ... |   |   |
+| containerStyle | array  | Style that will apply on the main View that wraps the parsed html                                               |   |   |
+| tagsStyle      | array  | Styles that will be applied to their corresponding html tags (blocks and inlines) |   |   |
 | html           | String | Your HTML content that needs to be parsed                                               |   |   |
 
-There is a special tags you can use, it's **general**. Its attributes will be applied to every html inline tags.
+There is a special tag you can use, it's **general**. Its attributes will be applied to every html tags (block and inline tags).
 ```jsx
 var tagsStyle = {
-  general: {
-    fontFamily: "Roboto"
-  },
-  p: {
-    marginBottom: 15
-  }
+general: {
+fontFamily: "Roboto"
+},
+p: {
+marginBottom: 15
+}
 }
 ```
 
