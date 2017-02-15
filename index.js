@@ -167,9 +167,6 @@ class HtmlParser extends Component {
 							? identifier.transformValue(value) 
 							: value;
 
-					
-				console.log(`${identifier.key}: ${finalValue}`);
-
 				if (
 					!identifier.acceptableValues ||
 					(
@@ -182,14 +179,9 @@ class HtmlParser extends Component {
 				) {
 					elements[identifier.key] = finalValue;
 				}
-			} else {
-				console.log(`${split[0]}: ${value}`);
-				console.log('No attribute for this');
 			}
 		}
-
-		console.log(elements);
-
+		
 		return elements;
 	}
 
@@ -229,16 +221,29 @@ class HtmlParser extends Component {
 		}
 
 		let extraStyle = null;
+		let elementId = null;
+
 		if (node.attrs.length > 0) {
-			node.attrs.forEach((element) => {
-				if (element.name === 'style') {
-					extraStyle = this.decodeStyle(element.value);
+			for (let i = 0; i < node.attrs.length; i++) {
+				const element = node.attrs[i];
+				switch (element.name) {
+					case 'style':
+						extraStyle = this.decodeStyle(element.value);
+						break;
+
+					case 'id':
+						elementId = element.value;
+						break;
+
+					default:
+						break;
 				}
-			});
+			}
 		}
 
+		const tagStyles = this.styleForTag({ tagName, extraStyle });
 		if (this.isInlineElement(tagName)) {
-			const key = `${parentKey}_${tagName}`;
+			const key = elementId || `${parentKey}_${tagName}`;
 			const children = [];
 
 			node.childNodes.forEach((childNode, index) => {
@@ -250,7 +255,7 @@ class HtmlParser extends Component {
 			return (
 				<Text 
 					key={key} 
-					style={this.styleForTag({ tagName, extraStyle })}
+					style={tagStyles}
 				>
 					{children}
 				</Text>
@@ -280,7 +285,7 @@ class HtmlParser extends Component {
 			}
 
 			return (
-				<Text key={key} style={this.styleForTag({ tagName, extraStyle })}>
+				<Text key={key} style={tagStyles}>
 					{tagName === 'li'
 						? <Text>&bull; <Text>{children}</Text>{'\n'}</Text>
 						: children
@@ -288,6 +293,7 @@ class HtmlParser extends Component {
 				</Text>
 			);
 		}
+		
 		return null;
 	}
 
