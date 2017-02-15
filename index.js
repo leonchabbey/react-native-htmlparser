@@ -148,8 +148,6 @@ class HtmlParser extends Component {
       node.childNodes.forEach((childNode, index) => {
         if (this.isInlineElement(childNode.nodeName) || this.isText(childNode.nodeName)) {
           children.push(this.processNode(childNode, `${key}_${index}`));
-        } else {
-          console.error(`Inline element ${nodeName} can only have inline children, ${child} is invalid!`);
         }
       });
 
@@ -167,7 +165,7 @@ class HtmlParser extends Component {
           lastInlineNodes.push(child);
         } else if (this.isBlockElement(childNode.nodeName)) {
           if (lastInlineNodes.length > 0) {
-            children.push(<Text key={`${key}_${index}_inline`}>{lastInlineNodes}</Text>)
+            children.push(<Text key={`${key}_${index}_inline`}>{lastInlineNodes}</Text>);
             lastInlineNodes = [];
           }
           children.push(child);
@@ -175,7 +173,7 @@ class HtmlParser extends Component {
       });
 
       if (lastInlineNodes.length > 0) {
-        children.push((<Text key={`${key}_last_inline`}>{lastInlineNodes}</Text>))
+        children.push((<Text key={`${key}_last_inline`}>{lastInlineNodes}</Text>));
       }
 
       return (
@@ -187,8 +185,6 @@ class HtmlParser extends Component {
         </Text>
       );
     }
-
-    console.warn(`unsupported node: ${nodeName}`)
     return null;
   }
 
