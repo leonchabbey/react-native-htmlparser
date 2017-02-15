@@ -1,274 +1,319 @@
-import parse5 from 'react-native-parse-html'
-import React, {Component} from "react"
-import {
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native'
+import parse5 from 'react-native-parse-html';
+import React, { Component, PropTypes } from 'react';
+import { StyleSheet, Text, View, Platform } from 'react-native';
 
-var BLOCK_ELEMENTS = [
-  "address",
-  "blockquote",
-  "center",
-  "dir",
-  "div",
-  "dl",
-  "fieldset",
-  "form",
-  "h1",
-  "h2",
-  "h3",
-  "h4",
-  "h5",
-  "h6",
-  "hr",
-  "isindex",
-  "menu",
-  "noframes",
-  "noscript",
-  "ol",
-  "p",
-  "pre",
-  "table",
-  "ul",
-  "li"
-]
+const BLOCK_ELEMENTS = [
+	'address', 'blockquote', 'center', 'dir', 'div', 'dl', 'fieldset', 'form',
+	'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'hr', 'isindex', 'menu', 'noframes',
+	'noscript', 'ol', 'p', 'pre', 'table', 'ul', 'li'
+];
 
-var INLINE_ELEMENTS = [
-  "a",
-  "abbr",
-  "acronym",
-  "b",
-  "basefont",
-  "bdo",
-  "big",
-  "br",
-  "cite",
-  "code",
-  "dfn",
-  "em",
-  "font",
-  "i",
-  "img",
-  "input",
-  "kbd",
-  "label",
-  "q",
-  "s",
-  "samp",
-  "select",
-  "small",
-  "span",
-  "strike",
-  "strong",
-  "sub",
-  "sup",
-  "textarea",
-  "tt",
-  "u",
-  "var"
-]
+const INLINE_ELEMENTS = [
+	'a', 'abbr', 'acronym', 'b', 'basefont', 'bdo', 'big', 'br', 'cite', 'code',
+	'dfn', 'em', 'font', 'i', 'img', 'input', 'kbd', 'label', 'q', 's', 'samp',
+	'select', 'small', 'span', 'strike', 'strong', 'sub', 'sup', 'textarea', 'tt', 'u', 'const'
+];
 
-var DEFAULT_STYLES = {
-  a: {
+const STYLE_EQUIVALENCE = {
+	color: {
+		key: 'color',
+	},
+	'font-family': {
+		key: 'fontFamily'
+	},
+	'font-size': {
+		key: 'fontSize',
+		transformValue: parseInt,
+	},
+	'font-style': {
+		key: 'fontStyle',
+	},
+	'font-weight': {
+		key: 'fontWeight',
+	},
+	'text-align': {
+		key: 'textAlign'
+	},
+	'text-decoration': {
+		key: 'textDecorationLine',
+		acceptableValues: ['none', 'underline', 'line-through', 'underline line-through']
+	},
+	'line-height': {
+		key: 'lineHeight',
+		transformValue: parseInt,
+	},
+	'letter-spacing': {
+		key: 'letterSpacing',
+		transformValue: parseInt,
+	}
+};
 
-  },
-  b: {
-    fontWeight: 'bold'
-  },
-  blockquote: {
-    paddingLeft: 12,
-    borderLeftWidth: 4,
-    borderLeftColor: '#cccccc',
-    marginBottom: 12
-  },
-  br: {
+const DEFAULT_STYLES = StyleSheet.create({
+	a: {
+		color: '#4169e1',
+		...Platform.select({
+			android: {
+				textDecorationLine: 'underline',
+			},
+			ios: {
+				fontWeight: 'bold',
+			}
+		}),
+	},
+	b: {
+		fontWeight: 'bold'
+	},
+	blockquote: {
+		paddingLeft: 12,
+		borderLeftWidth: 4,
+		borderLeftColor: '#cccccc',
+		marginBottom: 12
+	},
+	br: {
 
-  },
-  code: {
-    fontFamily: "Courier"
-  },
-  div: {
+	},
+	code: {
+		fontFamily: 'Courier'
+	},
+	div: {
 
-  },
-  em: {
-    fontStyle: 'italic'
-  },
-  h1: {
-    fontWeight: 'bold',
-  },
-  h2: {
-    fontWeight: 'bold',
-  },
-  h3: {
-    fontWeight: 'bold',
-  },
-  h4: {
-    fontWeight: 'bold',
-  },
-  h5: {
-    fontWeight: 'bold',
-  },
-  h6: {
-    fontWeight: 'bold',
-  },
-  i: {
-    fontStyle: 'italic'
-  },
-  p: {
-    marginBottom: 12,
-  },
-  pre: {
+	},
+	em: {
+		fontStyle: 'italic'
+	},
+	h1: {
+		fontSize: 24,
+	},
+	h2: {
+		fontSize: 20,
+	},
+	h3: {
+		fontSize: 18,
+	},
+	h4: {
+		fontSize: 17,
+	},
+	h5: {
+		fontSize: 16,
+	},
+	h6: {
+		fontSize: 15,
+	},
+	i: {
+		fontStyle: 'italic'
+	},
+	p: {
+		marginBottom: 12,
+	},
+	pre: {
 
-  },
-  strong: {
-    fontWeight: 'bold'
-  },
-  q: {
+	},
+	strong: {
+		fontWeight: 'bold'
+	},
+	q: {
 
-  },
-  span: {
+	},
+	span: {
 
-  },
-  sub: {
+	},
+	sub: {
 
-  },
-  sup: {
+	},
+	sup: {
 
-  },
-  ol:{
-    marginLeft: 24,
-  },
-  ul: {
-    marginLeft: 24,
-  },
-  u: {
-    textDecorationLine: "underline"
-  },
-  default: {
-    marginBottom: 12
-  }
-}
+	},
+	ol: {
+		marginLeft: 24,
+	},
+	ul: {
+		marginLeft: 24,
+	},
+	u: {
+		textDecorationLine: 'underline'
+	},
+	default: {
+		marginBottom: 12
+	}
+});
+
+const propTypes = {
+	encapsulate: PropTypes.bool,
+	html: PropTypes.string,
+	tagsStyle: PropTypes.instanceOf(StyleSheet)
+};
 
 class HtmlParser extends Component {
-  parse = (html) => {
-    var fragment = parse5.parseFragment(html)
-    return fragment
-  }
 
-  isText = (tagName) => {
-    return tagName === "#text"
-  }
+	parse = (html) => parse5.parseFragment(html);
+	isText = (tagName) => tagName === '#text';
+	isBlockElement = tagName => BLOCK_ELEMENTS.indexOf(tagName) !== -1;
+	isInlineElement = tagName => INLINE_ELEMENTS.indexOf(tagName) !== -1
+	isEmpty = node => node.value.trim() === ''
 
-  isBlockElement = (tagName) => {
-    return BLOCK_ELEMENTS.indexOf(tagName) != -1
-  }
+	decodeStyle(customStyle) {
+		const elements = {};
 
-  isInlineElement = (tagName) => {
-    return INLINE_ELEMENTS.indexOf(tagName) != -1
-  }
+		const splitedStyles = customStyle.split(',');
 
-  isEmpty = (node) => {
-    return node.value.trim() == ""
-  }
+		for (let i = 0; i < splitedStyles.length; i++) {
+			const split = splitedStyles[i].split(':');
 
-  styleForTag = (tagName) => {
-    const {tagsStyle} = this.props
+			const identifier = STYLE_EQUIVALENCE[split[0].trim()];
+			const value = split[1].trim().replace(/'/g, '');
 
-    var style = tagsStyle
-                  ? tagsStyle[tagName]
-                    ? tagsStyle[tagName]
-                    : DEFAULT_STYLES[tagName]
-                      ? DEFAULT_STYLES[tagName]
-                      : DEFAULT_STYLES["default"]
-                  : DEFAULT_STYLES[tagName]
-                    ? DEFAULT_STYLES[tagName]
-                    : DEFAULT_STYLES["default"]
+			if (identifier) {
+				const finalValue = identifier.transformValue 
+							? identifier.transformValue(value) 
+							: value;
 
-    return tagsStyle
-            ? tagsStyle["general"]
-              ? [tagsStyle["general"], style]
-              : style
-            : style
-  }
-  processNode = (node, parentKey) => {
-    var nodeName = node.nodeName
+				if (
+					!identifier.acceptableValues ||
+					(
+						identifier.acceptableValues &&
+						(
+							identifier.acceptableValues.length === 0 ||
+							identifier.acceptableValues.indexOf(finalValue) > -1
+						)
+					)
+				) {
+					elements[identifier.key] = finalValue;
+				}
+			}
+		}
+		
+		return elements;
+	}
 
-    if (this.isText(nodeName)) {
-      if (this.isEmpty(node)) {
-        return null
-      }
+	styleForTag(opts) {
+		const { tagName, extraStyle } = opts;
 
-      var key = `${parentKey}_text`
-      return (<Text key={key}>{node.value}</Text>)
-    }
+		const { tagsStyle } = this.props;
+		const styles = [];
 
-    if (this.isInlineElement(nodeName)) {
-      var key = `${parentKey}_${nodeName}`
-      var children = []
-      node.childNodes.forEach((childNode, index) => {
-        if (this.isInlineElement(childNode.nodeName) || this.isText(childNode.nodeName)) {
-          children.push(this.processNode(childNode, `${key}_${index}`))
-        } else {
-          console.error(`Inline element ${nodeName} can only have inline children, ${child} is invalid!`)
-        }
-      })
-      return (<Text key={key} style={this.styleForTag(nodeName)}>{children}</Text>)
-    }
+		if (DEFAULT_STYLES[tagName]) {
+			styles.push(DEFAULT_STYLES[tagName]);
+		} else {
+			styles.push(DEFAULT_STYLES.default);
+		}
 
-    if (this.isBlockElement(nodeName)) {
-      var key = `${parentKey}_${nodeName}`
-      var children = []
-      var lastInlineNodes = []
+		if (tagsStyle && tagsStyle.general) {
+			styles.push(tagsStyle.general);
+		}
 
-      node.childNodes.forEach((childNode, index) => {
-        var child = this.processNode(childNode, `${key}_${index}`)
-        if (this.isInlineElement(childNode.nodeName) || this.isText(childNode.nodeName)) {
-          lastInlineNodes.push(child)
+		if (tagsStyle && tagsStyle[tagName]) {
+			styles.push(tagsStyle[tagName]);
+		}
 
-        } else if (this.isBlockElement(childNode.nodeName)) {
-          if (lastInlineNodes.length > 0) {
-            children.push(<Text key={`${key}_${index}_inline`}>{lastInlineNodes}</Text>)  
-            lastInlineNodes = []
-          }
-          children.push(child)
-        }
-      })
+		if (extraStyle) {
+			styles.push(extraStyle);
+		}
 
-      if (lastInlineNodes.length > 0) {
-        children.push((<Text key={`${key}_last_inline`}>{lastInlineNodes}</Text>))  
-      }
+		return styles;
+	}
 
-      return (
-        <Text key={key} style={this.styleForTag(nodeName)}>
-          {nodeName === "li"
-            ? <Text>&bull; <Text>{children}</Text>{"\n"}</Text>
-            : children
-          }
-        </Text>
-      )
-    }
+	processNode(node, parentKey) {
+		const tagName = node.nodeName;
 
-    console.warn(`unsupported node: ${nodeName}`)
-    return null;
-  }
+		if (this.isText(tagName)) {
+			const key = `${parentKey}_text`;
+			return (<Text key={key}>{node.value}</Text>);
+		}
 
-  render() {
-    var html = this.props.html
-    var fragment = this.parse(html)
-    var rootKey = "ht_"
+		let extraStyle = null;
+		let elementId = null;
 
-    var children = []
-    fragment.childNodes.forEach((node, index) => {
-      children.push(this.processNode(node, `${rootKey}_${index}`))
-    })
+		if (node.attrs.length > 0) {
+			for (let i = 0; i < node.attrs.length; i++) {
+				const element = node.attrs[i];
+				switch (element.name) {
+					case 'style':
+						extraStyle = this.decodeStyle(element.value);
+						break;
 
-    return (
-      <View style={this.props.containerStyle}>
-        {children}
-      </View>
-    )
-  }
+					case 'id':
+						elementId = element.value;
+						break;
+
+					default:
+						break;
+				}
+			}
+		}
+
+		const tagStyles = this.styleForTag({ tagName, extraStyle });
+		if (this.isInlineElement(tagName)) {
+			const key = elementId || `${parentKey}_${tagName}`;
+			const children = [];
+
+			node.childNodes.forEach((childNode, index) => {
+				if (this.isInlineElement(childNode.nodeName) || this.isText(childNode.nodeName)) {
+					children.push(this.processNode(childNode, `${key}_${index}`));
+				}
+			});
+
+			return (
+				<Text 
+					key={key} 
+					style={tagStyles}
+				>
+					{children}
+				</Text>
+			);
+		}
+
+		if (this.isBlockElement(tagName)) {
+			const key = `${parentKey}_${tagName}`;
+			const children = [];
+			let lastInlineNodes = [];
+
+			node.childNodes.forEach((childNode, index) => {
+				const child = this.processNode(childNode, `${key}_${index}`);
+				if (this.isInlineElement(childNode.nodeName) || this.isText(childNode.nodeName)) {
+					lastInlineNodes.push(child);
+				} else if (this.isBlockElement(childNode.nodeName)) {
+					if (lastInlineNodes.length > 0) {
+						children.push(<Text key={`${key}_${index}_inline`}>{lastInlineNodes}</Text>);
+						lastInlineNodes = [];
+					}
+					children.push(child);
+				}
+			});
+
+			if (lastInlineNodes.length > 0) {
+				children.push((<Text key={`${key}_last_inline`}>{lastInlineNodes}</Text>));
+			}
+
+			return (
+				<Text key={key} style={tagStyles}>
+					{tagName === 'li'
+						? <Text>&bull; <Text>{children}</Text>{'\n'}</Text>
+						: children
+					}
+				</Text>
+			);
+		}
+		
+		return null;
+	}
+
+	render() {
+		const html = this.props.html;
+		const fragment = this.parse(this.props.encapsulate ? `<p>${html}</p>` : html);
+		const rootKey = 'ht_';
+
+		const children = [];
+		fragment.childNodes.forEach((node, index) => {
+			children.push(this.processNode(node, `${rootKey}_${index}`));
+		});
+
+		return (
+			<View style={this.props.containerStyle}>
+				{children}
+			</View>
+		);
+	}
 }
 
-export default HtmlParser
+HtmlParser.propTypes = propTypes;
+export default HtmlParser;
